@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cinéfilo · elige película sin dar mil vueltas</title>
+<meta name="description" content="Responde tres preguntas y quédate con cinco películas. Proyecto personal sin ánimo de lucro.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#16161a;--sf:#212127;--ln:#33333b;--tx:#ece8dc;--mu:#9d998d;--au:#D4AF37;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:400 15px/1.5 Manrope,system-ui,sans-serif}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;margin:0}
+main{max-width:1040px;margin:0 auto;padding:0 16px 40px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:18px 0;border-bottom:1px solid var(--ln)}
+.logo{font:700 2rem 'Cormorant Garamond',serif;color:var(--au);margin-right:auto;letter-spacing:.02em}
+form{display:flex;gap:6px;flex:1 1 280px;max-width:460px}
+input,select,button{font:inherit;color:var(--tx)}
+input[type=search],input[type=text],select{background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:9px 11px;min-width:0}
+form input{flex:1}
+button{cursor:pointer}
+.b{background:var(--au);color:#1a1608;border:0;border-radius:6px;padding:9px 16px;font-weight:800}
+.g{background:transparent;border:1px solid var(--ln);border-radius:6px;padding:9px 14px}
+:focus-visible{outline:2px solid var(--au);outline-offset:2px}
+.hero{padding:44px 0 20px}
+.hero h1{font-size:clamp(2.2rem,7vw,4rem);line-height:1.05;max-width:14em}
+.hero p{color:var(--mu);max-width:34em;margin:12px 0 22px}
+.q{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.q label{display:grid;gap:4px;font-size:.82rem;color:var(--mu)}
+section{margin-top:40px}
+h2{font-size:1.7rem;margin-bottom:14px}
+.mu,.none{color:var(--mu)}
+.row{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px}
+.row .card{flex:0 0 140px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px}
+.pod{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}
+.card{position:relative;display:flex;flex-direction:column;gap:6px}
+.pb{all:unset;cursor:pointer;display:block}
+.pb:focus-visible{outline:2px solid var(--au);outline-offset:2px}
+.pb img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:4px;display:block;background:var(--sf);box-shadow:0 0 0 1px var(--ln)}
+.pb b{display:block;margin-top:6px;font:600 1.05rem/1.15 'Cormorant Garamond',serif}
+.pb small{color:var(--mu)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.acts button{flex:1;background:var(--sf);border:1px solid var(--ln);border-radius:5px;padding:6px 4px;font-size:.78rem}
+.acts button[aria-pressed=true]{border-color:var(--au);color:var(--au)}
+.rk{position:absolute;left:8px;top:6px;font:700 2.2rem 'Cormorant Garamond',serif;color:var(--au);text-shadow:0 1px 8px #000;z-index:1;pointer-events:none}
+dialog{background:var(--bg);color:var(--tx);border:1px solid var(--ln);border-radius:10px;width:min(780px,calc(100% - 20px));max-height:92vh;padding:20px}
+dialog::backdrop{background:rgba(0,0,0,.75)}
+.mh{display:grid;grid-template-columns:minmax(120px,220px) 1fr;gap:18px}
+.mh img{width:100%;border-radius:6px;aspect-ratio:2/3;object-fit:cover}
+.mh h2{margin-bottom:4px}
+dialog h3{font-size:1.3rem;margin:18px 0 6px;color:var(--au)}
+.sim{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{border:1px solid var(--ln);border-radius:99px;padding:4px 12px;font-size:.85rem;cursor:pointer}
+.chip:has(input:checked){border-color:var(--au);color:var(--au)}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip:has(input:focus-visible){outline:2px solid var(--au)}
+footer{border-top:1px solid var(--ln);margin-top:56px;padding-top:20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;color:var(--mu);font-size:.85rem}
+footer input[type=text]{width:190px}
+.x{float:right}footer a{color:var(--au)}
+@media (max-width:560px){.mh{grid-template-columns:1fr 1.5fr;gap:12px}.sim{gap:8px}.q>*{flex:1 1 100%}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <span class="logo">Cinéfilo</span>
+  <form id="sf" role="search"><input id="sq" type="search" placeholder="Busca cualquier película" aria-label="Buscar película"><button class="b">Buscar</button></form>
+  <button class="g" id="pf">Para ti</button><button class="g" id="pl">Mi lista <span id="nl"></span></button><button class="g" id="pv">Vistas <span id="nv"></span></button><button class="g" id="tb">Mis gustos</button>
+</header>
+
+<div class="hero">
+  <h1>Responde tres preguntas y quédate con cinco películas.</h1>
+  <p>Sin listas infinitas. Dinos cuánto tiempo tienes, qué te apetece sentir y qué género, y te damos tu podio.</p>
+  <div class="q">
+    <label>Tiempo<select id="qt"><option value="100">Hasta 100 min</option><option value="130">Hasta 2 h 10</option><option value="0">Sin límite</option></select></label>
+    <label>Intención<select id="qm"><option value="">Me da igual</option></select></label>
+    <label>Género<select id="qg"><option value="">Cualquiera</option></select></label>
+    <button class="b" id="go">Elegir mis 5</button>
+  </div>
+</div>
+
+<section id="sr" hidden><h2>Resultados <button class="g x" id="cs">Cerrar</button></h2><p class="mu" id="sn"></p><div class="grid" id="srg"></div></section>
+<section id="rs" hidden>
+  <h2>Tus 5 elegidas</h2><div class="pod" id="pod"></div>
+  <div id="ot"><h2 style="margin-top:36px">Otras que encajan con lo que buscas</h2><div class="grid" id="oth"></div><p><button class="g" id="more">Ver 20 más</button></p></div>
+</section>
+<section><h2>Las 7 de la semana</h2><p class="mu">Cambian cada lunes y no incluyen las que ya has visto.</p><div class="row" id="wk"></div></section>
+
+
+
+
+<footer>
+  <button class="g" id="ex">Exportar datos</button>
+  <button class="g" id="rt">Restaurar datos</button><input id="rf" type="file" accept="application/json" hidden>
+  
+  <span style="flex-basis:100%">Tus datos viven solo en este navegador. Ficha y plataformas vía TMDb. This website uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.</span>
+<span style="flex-basis:100%"><img src="/tmdb-logo.svg" alt="TMDb" height="14" onerror="this.remove()"> <a href="/privacidad.html">Privacidad</a> · <a href="/cookies.html">Cookies</a> · <a href="/aviso-legal.html">Aviso legal</a></span>
+</footer>
+</main>
+
+<dialog id="dlg"><button class="g x" id="dc">Cerrar</button><div id="mb"></div></dialog>
+<dialog id="pn"><button class="g x" id="pc">Cerrar</button><h2 id="pt"></h2><p class="mu" id="ps"></p><div class="grid" id="pg"></div></dialog>
+<dialog id="td"><h2>Mis gustos</h2><p class="mu">Hasta 3 géneros y 3 directores.</p><h3>Géneros</h3><div class="chips" id="tgl"></div><h3>Directores</h3><div class="chips" id="tdl"></div><p><button class="b" id="ts">Guardar</button> <button class="g" id="tx">Cancelar</button></p></dialog>
+
+<script>
+const G={D:"Drama",C:"Comedia",T:"Thriller",S:"Ciencia ficción",A:"Aventura",H:"Terror",R:"Romance",N:"Animación",K:"Crimen",G:"Bélico",W:"Western",F:"Fantasía"};
+const MO={a:"Alegre",r:"Reflexivo",t:"Tenso",e:"Evasión",o:"Romántico"};
+const TG={D:18,C:35,T:53,S:878,A:12,H:27,R:10749,N:16,K:80,G:10752,W:37,F:14},RV={};Object.entries(TG).forEach(([k,v])=>RV[v]=k);
+const RAW=`Casablanca|1942|102|Michael Curtiz|Humphrey Bogart, Ingrid Bergman|D,R|o,r|8.5|99|Amor imposible y sacrificio en el romance más citado del cine.
+El padrino|1972|175|Francis Ford Coppola|Marlon Brando, Al Pacino|D,K|t,r|9.2|97|Saga familiar y poder: la referencia del cine negro.
+Pulp Fiction|1994|154|Quentin Tarantino|John Travolta, Samuel L. Jackson|K,T|t,e|8.9|92|Diálogos brillantes y estructura rota que se disfruta desde el minuto uno.
+Cadena perpetua|1994|142|Frank Darabont|Tim Robbins, Morgan Freeman|D|r,e|9.3|89|Esperanza y amistad: sales con el ánimo arriba.
+Parásitos|2019|132|Bong Joon-ho|Song Kang-ho, Choi Woo-shik|T,D|t,r|8.5|99|Sátira social con giros que no vas a ver venir.
+Cinema Paradiso|1988|124|Giuseppe Tornatore|Philippe Noiret, Salvatore Cascio|D,R|o,r|8.5|91|Una carta de amor al cine que emociona sin esfuerzo.
+Amélie|2001|122|Jean-Pierre Jeunet|Audrey Tautou, Mathieu Kassovitz|C,R|a,o|8.3|90|Pequeñas bondades y mucha ternura en un París de fábula.
+El viaje de Chihiro|2001|125|Hayao Miyazaki|Rumi Hiiragi, Miyu Irino|N,F|e,a|8.6|97|Un mundo fantástico para perderse sin mirar el reloj.
+Blade Runner|1982|117|Ridley Scott|Harrison Ford, Rutger Hauer|S,T|r,t|8.1|89|Ciencia ficción melancólica sobre qué nos hace humanos.
+2001: Una odisea del espacio|1968|149|Stanley Kubrick|Keir Dullea, Gary Lockwood|S|r|8.3|92|Cine contemplativo y enorme, para ver con calma.
+Con faldas y a lo loco|1959|121|Billy Wilder|Marilyn Monroe, Jack Lemmon|C|a|8.2|98|Comedia perfecta: ritmo, enredos y un final legendario.
+Ciudadano Kane|1941|119|Orson Welles|Orson Welles, Joseph Cotten|D|r|8.3|99|El clásico que cambió cómo se cuenta una vida.
+Los siete samuráis|1954|207|Akira Kurosawa|Toshiro Mifune, Takashi Shimura|A,D|e|8.6|100|Aventura épica que fundó el cine de equipo.
+Matrix|1999|136|Lana y Lilly Wachowski|Keanu Reeves, Laurence Fishburne|S,A|e,t|8.7|83|Acción y filosofía pop en una ciencia ficción icónica.
+El resplandor|1980|146|Stanley Kubrick|Jack Nicholson, Shelley Duvall|H,T|t|8.4|83|Terror psicológico que se mete debajo de la piel.
+Alien|1979|117|Ridley Scott|Sigourney Weaver, Tom Skerritt|S,H|t|8.5|93|Tensión pura en una nave sin salida.
+Regreso al futuro|1985|116|Robert Zemeckis|Michael J. Fox, Christopher Lloyd|S,C,A|a,e|8.5|93|Diversión redonda para todas las edades.
+La lista de Schindler|1993|195|Steven Spielberg|Liam Neeson, Ben Kingsley|D,G|r|9.0|98|Duro y necesario: cine que se queda contigo.
+Taxi Driver|1976|114|Martin Scorsese|Robert De Niro, Jodie Foster|D,K|t,r|8.2|96|Retrato inquietante de la soledad urbana.
+Cantando bajo la lluvia|1952|103|Gene Kelly, Stanley Donen|Gene Kelly, Debbie Reynolds|C,R|a,o|8.3|99|Un chute de alegría en forma de musical.
+Vértigo|1958|128|Alfred Hitchcock|James Stewart, Kim Novak|T,R|t,o|8.3|93|Obsesión y misterio con el sello Hitchcock.
+La ventana indiscreta|1954|112|Alfred Hitchcock|James Stewart, Grace Kelly|T|t|8.5|98|Suspense en un solo escenario, sin respiro.
+El bueno, el feo y el malo|1966|161|Sergio Leone|Clint Eastwood, Eli Wallach|W,A|e|8.8|97|El western definitivo, con una banda sonora inolvidable.
+Mulholland Drive|2001|147|David Lynch|Naomi Watts, Laura Harring|T,D|t,r|7.9|83|Un enigma onírico para quien quiere pensar después.
+Her|2013|126|Spike Jonze|Joaquin Phoenix, Scarlett Johansson|R,S,D|r,o|7.9|95|Una historia de amor del futuro cercano, íntima y dulce.
+Lost in Translation|2003|102|Sofia Coppola|Bill Murray, Scarlett Johansson|D,C,R|r,o|7.7|95|Dos desconocidos en Tokio y mucha complicidad silenciosa.
+El laberinto del fauno|2006|118|Guillermo del Toro|Ivana Baquero, Sergi López|F,D|r,e|8.2|95|Fantasía oscura y hermosa sobre la posguerra española.
+Origen|2010|148|Christopher Nolan|Leonardo DiCaprio, Joseph Gordon-Levitt|S,T|t,e|8.8|87|Un atraco dentro de los sueños, vertiginoso y brillante.
+Interstellar|2014|169|Christopher Nolan|Matthew McConaughey, Anne Hathaway|S,D|r,e|8.7|73|Espectáculo espacial con corazón de padre e hija.
+Whiplash|2014|107|Damien Chazelle|Miles Teller, J.K. Simmons|D|t|8.5|94|Una hora y media de tensión sin pestañear.
+La La Land|2016|128|Damien Chazelle|Ryan Gosling, Emma Stone|R,C,D|o,a|8.0|91|Música, color y un amor agridulce.
+Mad Max: Furia en la carretera|2015|120|George Miller|Tom Hardy, Charlize Theron|A,S|e,t|8.1|97|Dos horas de acción continua y diseño espectacular.
+El Gran Hotel Budapest|2014|99|Wes Anderson|Ralph Fiennes, Tony Revolori|C,A|a,e|8.1|92|Humor elegante y simetría en una aventura de cuento.
+Oldboy|2003|120|Park Chan-wook|Choi Min-sik, Yoo Ji-tae|T,K|t|8.3|80|Venganza brutal con un giro que no se olvida.
+Mi vecino Totoro|1988|86|Hayao Miyazaki|Noriko Hidaka, Chika Sakamoto|N,F|a,e|8.1|94|Corta, tierna y perfecta para desconectar.
+Toy Story|1995|81|John Lasseter|Tom Hanks, Tim Allen|N,C,A|a,e|8.3|100|Aventura animada que sigue funcionando para todos.
+Cuenta conmigo|1986|89|Rob Reiner|Wil Wheaton, River Phoenix|D,A|r,o|8.1|92|La amistad adolescente más honesta del cine.
+El club de la lucha|1999|139|David Fincher|Brad Pitt, Edward Norton|D,T|t,r|8.8|79|Cínica, nerviosa y con un final de los que se comentan.
+Seven|1995|127|David Fincher|Brad Pitt, Morgan Freeman|K,T|t|8.6|83|Thriller sombrío con un desenlace demoledor.
+El silencio de los corderos|1991|118|Jonathan Demme|Jodie Foster, Anthony Hopkins|T,K|t|8.6|95|Un duelo mental inolvidable entre detective y asesino.
+Apocalypse Now|1979|147|Francis Ford Coppola|Martin Sheen, Marlon Brando|G,D|t,r|8.4|98|Viaje alucinado al corazón de la guerra.
+Doce hombres sin piedad|1957|96|Sidney Lumet|Henry Fonda, Lee J. Cobb|D|t,r|9.0|100|Un solo cuarto, doce hombres y tensión de principio a fin.
+El apartamento|1960|125|Billy Wilder|Jack Lemmon, Shirley MacLaine|C,R,D|a,o,r|8.3|93|Comedia agridulce con alma y una gran historia de amor.
+Amores perros|2000|154|Alejandro G. Iñárritu|Gael García Bernal, Emilio Echevarría|D,T|t,r|8.0|92|Tres historias cruzadas por un accidente en México.
+Todo sobre mi madre|1999|101|Pedro Almodóvar|Cecilia Roth, Marisa Paredes|D|r,o|7.8|98|Melodrama luminoso sobre la maternidad y la amistad.
+El orfanato|2007|105|J.A. Bayona|Belén Rueda, Fernando Cayo|H,D|t|7.4|86|Terror emocional con una atmósfera impecable.
+Ratatouille|2007|111|Brad Bird|Patton Oswalt, Lou Romano|N,C|a,o|8.1|96|Una fábula deliciosa sobre cocinar y atreverse.
+Cuando Harry encontró a Sally|1989|96|Rob Reiner|Billy Crystal, Meg Ryan|C,R|a,o|7.7|90|La comedia romántica de referencia: ingeniosa y cálida.
+Jurassic Park|1993|127|Steven Spielberg|Sam Neill, Laura Dern|A,S|e,t|8.2|92|Aventura de cine puro, con maravilla y sustos.
+Los Goonies|1985|114|Richard Donner|Sean Astin, Josh Brolin|A,C|a,e|7.7|76|Aventura de pandilla llena de nostalgia.`;
+const CAT=RAW.split("\n").map((l,i)=>{const[t,y,m,d,c,g,mo,im,rt,r]=l.split("|");return{id:"L"+i,t,y:+y,m:+m,d,c,g:g.split(","),mo:mo.split(","),im:+im,rt:+rt,r}});
+const $=id=>document.getElementById(id),esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+// Las claves reales viven en Cloudflare (TMDB_KEY y OMDB_KEY), nunca en esta página. "1" = usar el proxy.
+const TMDB_KEY="1";
+const OMDB_KEY="1";
+let S={list:[],seen:[],taste:{g:[],d:[]},cache:{}},KEY=TMDB_KEY,REG={},RES=null,SH=0,MID=null;
+try{Object.assign(S,JSON.parse(localStorage.getItem("cf")||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem("cf",JSON.stringify(S))}catch(e){}};
+CAT.forEach(m=>REG[m.id]=m);Object.values(S.cache).forEach(m=>REG[m.id]=m);
+
+for(const[k,v]of Object.entries(MO))$("qm").add(new Option(v,k));for(const[k,v]of Object.entries(G))$("qg").add(new Option(v,k));
+
+function svg(m){let h=0;for(const c of m.t)h=(h*31+c.charCodeAt(0))%360;const L=[];let cur="";m.t.split(" ").forEach(x=>{if((cur+" "+x).trim().length>13){L.push(cur);cur=x}else cur=(cur+" "+x).trim()});L.push(cur);
+const tx=L.slice(0,5).map((l,i)=>`<text x="150" y="${150+i*38}" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="32" fill="#f3ead2">${esc(l)}</text>`).join("");
+return "data:image/svg+xml;utf8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 450"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h} 35% 24%)"/><stop offset="1" stop-color="hsl(${(h+40)%360} 30% 9%)"/></linearGradient></defs><rect width="300" height="450" fill="url(#g)"/><rect x="14" y="14" width="272" height="422" fill="none" stroke="#D4AF37" stroke-opacity=".55"/>${tx}<text x="150" y="410" text-anchor="middle" font-family="Manrope,sans-serif" font-size="20" fill="#D4AF37">${m.y||""}</text></svg>`)}
+const src=(m,w)=>m.p?`https://image.tmdb.org/t/p/${w}${m.p}`:m.pu||svg(m);
+document.addEventListener("error",e=>{const t=e.target;if(t.dataset&&t.dataset.fb){t.src=t.dataset.fb;delete t.dataset.fb}},true);
+
+function card(m,rank){REG[m.id]=m;const l=S.list.includes(m.id),v=S.seen.includes(m.id);
+return `<div class="card">${rank?`<span class="rk">${rank}</span>`:""}<button class="pb" data-o="${m.id}"><img src="${src(m,"w342")}" data-fb="${svg(m)}" alt="Cartel de ${esc(m.t)}" loading="lazy"><b>${esc(m.t)}</b><small>${m.y||""}${m.m?" · "+m.m+" min":""}</small></button><div class="acts"><button data-l="${m.id}" aria-pressed="${l}">${l?"En mi lista":"+ Mi lista"}</button><button data-v="${m.id}" aria-pressed="${v}">${v?"Vista ✓":"Marcar vista"}</button></div></div>`}
+const fill=(id,a,msg)=>$(id).innerHTML=a.length?a.map(m=>card(m)).join(""):`<p class="none">${msg}</p>`;
+
+function seed(){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-(d.getDay()+6)%7);return Math.floor(d/864e5)}
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function week(){const r=rng(seed());return CAT.map(m=>[r(),m]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]).filter(m=>!S.seen.includes(m.id)).slice(0,7)}
+const taste=m=>(m.g||[]).filter(g=>S.taste.g.includes(g)).length*2+(S.taste.d.includes(m.d)?3:0);
+function renderAll(){
+  fill("wk",week(),"Has visto todo el catálogo base. Busca algo nuevo arriba.");
+  const hasT=S.taste.g.length+S.taste.d.length;
+  $("nl").textContent=S.list.length||"";$("nv").textContent=S.seen.length||"";if($("pn").open)drawP();
+  
+  
+  drawRec();if($("dlg").open)drawM();
+}
+function toggle(k,id){const m=REG[id];if(!m)return;const a=S[k],i=a.indexOf(id);
+  if(i>=0)a.splice(i,1);else{a.push(id);if(k==="seen")S.list=S.list.filter(x=>x!==id)}
+  if(id[0]==="t")S.cache[id]={id:m.id,t:m.t,y:m.y,m:m.m,d:m.d,c:m.c,g:m.g,p:m.p,s:m.s,va:m.va,ts:Date.now()};
+  save();renderAll()}
+
+function drawRec(){if(!RES)return;$("rs").hidden=false;
+  $("pod").innerHTML=RES.length?RES.slice(0,5).map((m,i)=>card(m,i+1)).join(""):'<p class="none">Nada con esos filtros. Prueba con más tiempo o «Cualquiera».</p>';
+  const rest=RES.slice(5,5+SH);$("ot").hidden=RES.length<=5;$("oth").innerHTML=rest.map(m=>card(m)).join("");$("more").hidden=RES.length<=5+SH}
+async function rec(){const T=+$("qt").value,mo=$("qm").value,g=$("qg").value;
+  const p=CAT.filter(m=>!S.seen.includes(m.id)&&(!T||m.m<=T)),sc=m=>(mo&&m.mo.includes(mo)?3:0)+(g&&m.g.includes(g)?3:0)+m.im/5+taste(m)*.5;
+  let s=p.filter(m=>(!mo||m.mo.includes(mo))&&(!g||m.g.includes(g)));if(s.length<5)s=p;
+  RES=s.sort((a,b)=>sc(b)-sc(a));SH=20;drawRec();$("rs").scrollIntoView({behavior:"smooth"});
+  if(KEY&&g){const d=await tm("/discover/movie",`&with_genres=${TG[g]}&sort_by=vote_count.desc&vote_average.gte=7${T?"&with_runtime.lte="+T:""}`);
+    if(d&&d.results){const ids=new Set(RES.map(m=>m.title));d.results.map(mapT).forEach(m=>{if(!S.seen.includes(m.id)&&!RES.some(x=>x.t===m.t))RES.push(m)});drawRec()}}}
+
+async function tm(path,q){if(!KEY)return null;try{const r=await fetch(`/api/tmdb${path}?language=es-ES${q||""}`);if(!r.ok)return null;return await r.json()}catch(e){return null}}
+const mapT=r=>({id:"t"+r.id,t:r.title,y:+(r.release_date||"0").slice(0,4)||0,p:r.poster_path,s:r.overview,va:r.vote_average?r.vote_average.toFixed(1):"",g:(r.genre_ids||[]).map(i=>RV[i]).filter(Boolean)});
+async function enrich(m){await enrichT(m);await enrichO(m)}
+async function enrichO(m){if(!OMDB_KEY||m.om||!m.ii)return;m.om=1;try{const r=await fetch(`/api/omdb?i=${encodeURIComponent(m.ii)}`);const d=await r.json();if(d.Response!=="True"){m.om=0;return}
+ const i=parseFloat(d.imdbRating);if(i)m.im=i;const rt=(d.Ratings||[]).find(x=>x.Source==="Rotten Tomatoes");if(rt)m.rt=parseInt(rt.Value);if(!m.s&&d.Plot&&d.Plot!=="N/A")m.s=d.Plot;if(!m.p&&d.Poster&&d.Poster!=="N/A")m.pu=d.Poster}catch(e){m.om=0}}
+async function enrichT(m){if(!KEY||m.full)return;let tid=m.id[0]==="t"?m.id.slice(1):null;
+  if(!tid){const s=await tm("/search/movie",`&query=${encodeURIComponent(m.t)}&year=${m.y}`);tid=s&&s.results&&s.results[0]&&s.results[0].id}
+  const d=tid&&await tm("/movie/"+tid,"&append_to_response=credits,watch/providers");if(!d){m.nf=1;return}
+  m.full=1;m.nf=0;m.ii=d.imdb_id||m.ii;m.s=d.overview||m.s;m.m=m.m||d.runtime;m.p=d.poster_path||m.p;m.va=d.vote_average?d.vote_average.toFixed(1):m.va;
+  const cr=d.credits||{};m.d=m.d||(cr.crew||[]).filter(x=>x.job==="Director").map(x=>x.name).join(", ");m.c=m.c||(cr.cast||[]).slice(0,4).map(x=>x.name).join(", ");
+  if(!m.g||!m.g.length)m.g=(d.genres||[]).map(x=>RV[x.id]).filter(Boolean);
+  const es=((d["watch/providers"]||{}).results||{}).ES||{};m.pv=[...(es.flatrate||[]),...(es.rent||[]).slice(0,0)].map(x=>x.provider_name)}
+function similar(m){return Object.values(REG).filter(x=>x.id!==m.id&&!S.seen.includes(x.id)&&x.g).map(x=>[x,(x.g||[]).filter(g=>(m.g||[]).includes(g)).length+(x.d&&x.d===m.d?2:0)+x.im/20||0]).filter(a=>a[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,3).map(a=>a[0])}
+function drawM(){const m=REG[MID];if(!m)return;const l=S.list.includes(m.id),v=S.seen.includes(m.id);
+  $("mb").innerHTML=`<div class="mh"><img src="${src(m,"w500")}" data-fb="${svg(m)}" alt="Cartel de ${esc(m.t)}"><div><h2>${esc(m.t)}</h2><p class="mu">${m.y||""}${m.m?" · "+m.m+" min":""}${m.g&&m.g.length?" · "+m.g.map(x=>G[x]).join(", "):""}</p><p><b>Dirección:</b> ${esc(m.d||"—")}</p><p><b>Reparto:</b> ${esc(m.c||"—")}</p><p style="color:var(--au)">${[m.im?"IMDb "+m.im:"",m.rt?"Rotten Tomatoes "+m.rt+"%":"",m.va?"TMDb "+m.va:""].filter(Boolean).join(" · ")}</p><div class="acts"><button data-l="${m.id}" aria-pressed="${l}">${l?"En mi lista":"+ Mi lista"}</button><button data-v="${m.id}" aria-pressed="${v}">${v?"Vista ✓":"Marcar vista"}</button></div></div></div>
+  ${m.r?`<h3>Por qué te la recomendamos</h3><p>${esc(m.r)}</p>`:""}${m.s?`<h3>Sinopsis</h3><p>${esc(m.s)}</p>`:""}
+  <h3>Dónde verla en España</h3><p>${m.pv?(m.pv.length?m.pv.map(esc).join(", "):"No aparece en plataformas de suscripción ahora mismo."):KEY?(m.nf?"No se pudo consultar TMDb.":"Buscando…"):"Información de plataformas no disponible por ahora."}</p>
+  <h3>Películas similares</h3><div class="sim">${similar(m).map(x=>card(x)).join("")||'<p class="none">Sin sugerencias por ahora.</p>'}</div>`}
+async function openM(id){MID=id;drawM();if(!$("dlg").open)$("dlg").showModal();$("dlg").scrollTop=0;const m=REG[id];await enrich(m);if(MID===id&&$("dlg").open)drawM()}
+
+document.addEventListener("click",e=>{const t=e.target.closest("[data-o],[data-l],[data-v]");if(!t)return;
+  if(t.dataset.o)openM(t.dataset.o);else if(t.dataset.l)toggle("list",t.dataset.l);else toggle("seen",t.dataset.v)});
+$("dc").onclick=()=>$("dlg").close();$("go").onclick=rec;$("more").onclick=()=>{SH+=20;drawRec()};
+$("sf").onsubmit=async e=>{e.preventDefault();const q=$("sq").value.trim();if(!q)return;const n=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  let a,note="";if(KEY){const d=await tm("/search/movie","&query="+encodeURIComponent(q));a=d&&d.results?d.results.slice(0,20).map(mapT):[];note=d?"Resultados de TMDb.":"No se pudo consultar TMDb; inténtalo de nuevo más tarde."}
+  if(!a||!a.length){a=CAT.filter(m=>n(m.t+" "+m.d).includes(n(q)));if(!KEY)note="Buscando en el catálogo base."}
+  $("sr").hidden=false;$("sn").textContent=note;$("srg").innerHTML=a.length?a.map(m=>card(m)).join(""):'<p class="none">Sin resultados. Prueba con otro título.</p>';$("sr").scrollIntoView({behavior:"smooth"})};
+$("cs").onclick=()=>{$("sr").hidden=true};
+
+$("tb").onclick=()=>{$("tgl").innerHTML=Object.entries(G).map(([k,v])=>`<label class="chip"><input type="checkbox" name="g" value="${k}" ${S.taste.g.includes(k)?"checked":""}>${v}</label>`).join("");
+  $("tdl").innerHTML=[...new Set(CAT.map(m=>m.d))].sort().map(d=>`<label class="chip"><input type="checkbox" name="d" value="${esc(d)}" ${S.taste.d.includes(d)?"checked":""}>${esc(d)}</label>`).join("");$("td").showModal()};
+$("td").addEventListener("change",e=>{if(document.querySelectorAll(`#td input[name=${e.target.name}]:checked`).length>3)e.target.checked=false});
+$("ts").onclick=()=>{const v=n=>[...document.querySelectorAll(`#td input[name=${n}]:checked`)].map(i=>i.value);S.taste={g:v("g"),d:v("d")};save();renderAll();$("td").close()};
+$("tx").onclick=()=>$("td").close();
+$("ex").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"}));a.download="cinefilo-datos.json";a.click()};
+$("rt").onclick=()=>$("rf").click();
+$("rf").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.list)||!Array.isArray(d.seen))throw 0;S={list:d.list,seen:d.seen,taste:d.taste||{g:[],d:[]},cache:d.cache||{}};Object.values(S.cache).forEach(m=>REG[m.id]=m);save();renderAll();alert("Datos restaurados.")}catch(x){alert("El archivo no es una copia válida de Cinéfilo.")}};r.readAsText(f)};
+let PK="";
+function drawP(){const hasT=S.taste.g.length+S.taste.d.length;let a,t,s="",e;
+ if(PK==="f"){t="Recomendadas para ti";a=hasT?CAT.filter(m=>!S.seen.includes(m.id)&&taste(m)>0).sort((x,y)=>taste(y)-taste(x)||y.im-x.im).slice(0,12):[];s=hasT?"Según tus géneros y directores favoritos.":"";e=hasT?"Aún no hay coincidencias con tus gustos.":"Cuéntanos tus gustos en «Mis gustos» y verás aquí tus afines."}
+ else if(PK==="l"){t="Mi lista";a=S.list.map(id=>REG[id]).filter(Boolean);e="Tu lista está vacía. Pulsa «+ Mi lista» en cualquier película."}
+ else{t="Vistas";a=S.seen.map(id=>REG[id]).filter(Boolean);e="Todavía no has marcado ninguna como vista."}
+ $("pt").textContent=t;$("ps").textContent=s;$("pg").innerHTML=a.length?a.map(m=>card(m)).join(""):`<p class="none">${e}</p>`}
+const openP=k=>{PK=k;drawP();if(!$("pn").open)$("pn").showModal();$("pn").scrollTop=0};
+$("pf").onclick=()=>openP("f");$("pl").onclick=()=>openP("l");$("pv").onclick=()=>openP("v");$("pc").onclick=()=>$("pn").close();
+// TMDb: sus datos no pueden conservarse más de 6 meses. A los 150 días se refrescan; si no se puede, se borran.
+const DAY=864e5;
+const mapD=d=>({id:"t"+d.id,t:d.title,y:+(d.release_date||"0").slice(0,4)||0,m:d.runtime,p:d.poster_path,s:d.overview,va:d.vote_average?d.vote_average.toFixed(1):"",g:(d.genres||[]).map(x=>RV[x.id]).filter(Boolean)});
+async function refreshCache(){let ch=0;const now=Date.now();
+ const ids=new Set([...S.list,...S.seen,...Object.keys(S.cache)].filter(i=>i[0]==="t"));
+ for(const id of ids){const c=S.cache[id];
+  if(c&&!c.ts){c.ts=now;ch=1;continue}
+  if(c&&now-c.ts<150*DAY)continue;
+  const d=KEY?await tm("/movie/"+id.slice(1)):null;
+  if(d&&d.id){S.cache[id]=Object.assign(mapD(d),{ts:now});REG[id]=S.cache[id]}
+  else{delete S.cache[id];delete REG[id]}
+  ch=1}
+ if(ch){save();renderAll()}}
+refreshCache();
+renderAll();
+</script>
+</body>
+</html>
